@@ -1,3 +1,43 @@
 spring:
+  main:
+    web-application-type: reactive
+
   application:
     name: ms-module-gateway
+
+  config:
+    import:
+      - nacos:ms-module-gateway.yaml?refreshEnabled=true
+
+  cloud:
+    nacos:
+
+      server-addr: 127.0.0.1:28848
+      username: nacos
+      password: 7891919
+
+      config:
+        namespace: mathstreak_config_dev
+        group: DEFAULT_GROUP
+        refresh-enabled: true
+        import-check:
+          enabled: true
+
+      discovery:
+        namespace: mathstreak_config_dev
+        group: DEFAULT_GROUP
+        register-enabled: true
+        failure-tolerance-enabled: true
+        health-indicator:
+          enabled: false
+
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: ms-module-base
+              uri: lb://ms-module-base
+              predicates:
+                - Path=/api/base/**
+              filters:
+                - StripPrefix=2
